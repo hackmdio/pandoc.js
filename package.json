@@ -12,14 +12,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/extract-zip": "^1.6.2",
     "@types/fs-extra": "^8.0.0",
+    "@types/glob": "^7.1.1",
     "@types/got": "^9.6.7",
     "@types/node": "^12.7.2",
     "@types/progress": "^2.0.3",
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "extract-zip": "^1.6.7",
     "fs-extra": "^8.1.0",
+    "glob": "^7.1.4",
     "got": "^9.6.0",
     "progress": "^2.0.3"
   }
