@@ -1,9 +1,11 @@
-import * as fs from 'fs-extra'
+import { promisify } from 'util'
 import * as path from 'path'
+
+import * as fs from 'fs-extra'
 import got from 'got'
 import ProgressBar from 'progress'
-import extract from 'extract-zip'
-import glob from 'glob'
+import extractC from 'extract-zip'
+import globC from 'glob'
 
 type supportedPlastform = 'darwin' | 'linux' | 'win32'
 
@@ -18,25 +20,8 @@ const filterAssets = asset => {
   return asset.name.indexOf(archStr) >= 0 && asset.name.indexOf('.zip') >= 0;
 }
 
-const extractP = (a, b) => new Promise((resolve, reject) => {
-  extract(a, b, function (err) {
-    if (err) {
-      reject(err)
-    } else {
-      resolve()
-    }
-  })
-})
-
-const globP = (a, b = {}) => new Promise((resolve, reject) => {
-  glob(a, b, function (err, files) {
-    if (err) {
-      reject(err)
-    } else {
-      resolve(files)
-    }
-  })
-})
+const extract = promisify(extractC)
+const glob = promisify(globC)
 
 async function run () {
   const { body: release } = await got('https://api.github.com/repos/jgm/pandoc/releases/latest', { json: true })
@@ -63,9 +48,9 @@ async function run () {
       })
     }
 
-    await extractP(zipPath, { dir: downloadDir })
+    await extract(zipPath, { dir: downloadDir })
 
-    const files = await globP(`${downloadDir}/**/{pandoc,pandoc-citeproc}`)
+    const files = await glob(`${downloadDir}/**/{pandoc,pandoc-citeproc}`)
     ;(files as string[]).forEach(f => {
       fs.copyFileSync(f, path.join(donwloadRoot, path.basename(f)))
     })
