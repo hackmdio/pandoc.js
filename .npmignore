@@ -3,4 +3,8 @@
 src
 test
 
+node_modules
+
 .pandoc-local
+
+tsconfig.json
