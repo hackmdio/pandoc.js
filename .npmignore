@@ -1,0 +1,6 @@
+.gitignore
+
+src
+test
+
+.pandoc-local

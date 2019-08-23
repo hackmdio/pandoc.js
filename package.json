@@ -1,14 +1,18 @@
 {
-  "name": "pandoc.js",
-  "version": "1.0.0",
+  "name": "@yukaii/pandoc.js",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.spec.ts",
     "watch": "tsc -w",
     "build": "tsc",
+    "prepublish": "npm run build",
     "install": "node dist/download.js"
   },
+  "files": [
+    "./dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
