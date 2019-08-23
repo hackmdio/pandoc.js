@@ -143,7 +143,7 @@ class Pandoc {
     }
   };
 
-  run(
+  convert(
     src: string,
     from: InputFormat,
     to: OutputFormat,
@@ -192,6 +192,19 @@ class Pandoc {
       // finally, send source string
       pandoc.stdin.end(src, 'utf8');
     });
+  }
+
+  convertToFile(str: string, from: InputFormat, to: OutputFormat, output: string, args?: string[], options?: SpawnOptionsWithoutStdio) {
+    return this.convert.bind(this)(
+      str,
+      from,
+      to,
+      [
+        '-o', output,
+        ...(args || [])
+      ],
+      options
+    )
   }
 }
 
