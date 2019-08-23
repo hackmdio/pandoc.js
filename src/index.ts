@@ -3,7 +3,7 @@ import * as path from 'path';
 
 const binaryRootPath = path.join(__dirname, '../.pandoc-local');
 
-type Partial<T> = { [P in keyof T]?: T[P] };
+type Nullable<T> = { [P in keyof T]?: T[P] | null };
 
 type PandocOptions = {
   pandocBin: string;
@@ -106,7 +106,7 @@ export enum OutputFormat {
   zimwiki = 'zimwiki',
 }
 
-const defaults = <T extends {}>(options: Partial<T>, defaultOption: T): T =>
+const defaults = <T extends {}>(options: Nullable<T>, defaultOption: T): T =>
   Object.keys(defaultOption).reduce(
     (acc, key) => ({
       ...acc,
@@ -118,7 +118,7 @@ const defaults = <T extends {}>(options: Partial<T>, defaultOption: T): T =>
 class Pandoc {
   defaultOptions: PandocOptions;
 
-  constructor(options: Partial<PandocOptions>) {
+  constructor(options: Nullable<PandocOptions> = {}) {
     this.defaultOptions = defaults(options, defaultPandocOption);
   }
 
