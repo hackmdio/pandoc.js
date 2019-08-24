@@ -1,4 +1,4 @@
-import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
+import { spawn, SpawnOptionsWithoutStdio, ChildProcessWithoutNullStreams } from 'child_process';
 import * as path from 'path';
 
 const binaryRootPath = path.join(__dirname, '../.pandoc-local');
@@ -143,36 +143,28 @@ class Pandoc {
     }
   };
 
-  convert(
-    src: string,
-    from: InputFormat,
-    to: OutputFormat,
-    args?: string[],
-    options?: SpawnOptionsWithoutStdio,
-  ) {
+  promisifyString (stream: ChildProcessWithoutNullStreams, cb = null) {
     return new Promise((resolve, reject) => {
-      const pandoc = this.stream(from, to, args, options);
-
       let result = '';
       let error = '';
 
       // listen on error
-      pandoc.on('error', function(err) {
+      stream.on('error', function(err) {
         return reject(err);
       });
 
       // collect result data
-      pandoc.stdout.on('data', function(data) {
+      stream.stdout.on('data', function(data) {
         result += data;
       });
 
       // collect error data
-      pandoc.stderr.on('data', function(data) {
+      stream.stderr.on('data', function(data) {
         error += data;
       });
 
       // listen on exit
-      pandoc.on('close', function(code) {
+      stream.on('close', function(code) {
         let msg = '';
         if (code !== 0) {
           msg += 'pandoc exited with code ' + code + (error ? ': ' : '.');
@@ -189,9 +181,35 @@ class Pandoc {
         resolve(result);
       });
 
+      // do more on stream
+      if (cb) {
+        cb(stream)
+      }
+    })
+  }
+
+  convert(
+    src: string,
+    from: InputFormat,
+    to: OutputFormat,
+    args?: string[],
+    options?: SpawnOptionsWithoutStdio,
+  ) {
+    const pandoc = this.stream(from, to, args, options);
+
+    return this.promisifyString(pandoc, (stream) => {
       // finally, send source string
       pandoc.stdin.end(src, 'utf8');
-    });
+    })
+  }
+
+  convertFromFile (input: string, to: OutputFormat, output: string, args: string[] = [], options?: SpawnOptionsWithoutStdio) {
+    return this.promisifyString(spawn(this.defaultOptions.pandocBin, [
+      input,
+      '-t', to,
+      '-o', output,
+      ...args
+    ], options));
   }
 
   convertToFile(str: string, from: InputFormat, to: OutputFormat, output: string, args?: string[], options?: SpawnOptionsWithoutStdio) {

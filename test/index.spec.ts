@@ -23,4 +23,21 @@ describe('Test index', function () {
     const str = fs.readFileSync(file.name, 'utf-8')
     assert.equal(str, '<h1 id="heading">Heading</h1>\n' )
   })
+
+  it('can convert markdown file to html file', async function () {
+    const pdc = new Pandoc()
+    const md = tmp.fileSync({
+      postfix: '.md'
+    })
+    fs.writeFileSync(md.name, '# Heading', { encoding: 'utf-8' })
+
+    const file = tmp.fileSync({
+      postfix: '.html'
+    })
+
+    await pdc.convertFromFile(md.name, OutputFormat.html, file.name)
+
+    const str = fs.readFileSync(file.name, 'utf-8')
+    assert.equal(str, '<h1 id="heading">Heading</h1>\n' )
+  })
 })
