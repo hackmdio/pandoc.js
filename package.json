@@ -8,7 +8,7 @@
     "watch": "tsc -w",
     "build": "tsc",
     "prepublish": "npm run build",
-    "install": "node dist/download.js"
+    "install": "node download.js"
   },
   "keywords": [],
   "author": "",
