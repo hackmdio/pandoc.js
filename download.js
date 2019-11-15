@@ -1,11 +1,11 @@
-import { promisify } from 'util';
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import got from 'got';
-import ProgressBar from 'progress';
-import extractC from 'extract-zip';
-import tar from 'tar';
-import globC from 'glob';
+const { promisify } = require('util');
+const path = require('path');
+const fs = require('fs-extra');
+const got = require('got');
+const ProgressBar = require('progress');
+const extractC = require('extract-zip');
+const tar = require('tar');
+const globC = require('glob');
 
 const platformMap = {
   win32: process.arch === 'x64' ? 'windows-x86_64' : 'windows-i386',
