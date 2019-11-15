@@ -5,6 +5,7 @@ import * as fs from 'fs-extra'
 import got from 'got'
 import ProgressBar from 'progress'
 import extractC from 'extract-zip'
+import tar from 'tar'
 import globC from 'glob'
 
 type supportedPlastform = 'darwin' | 'linux' | 'win32'
@@ -17,11 +18,24 @@ const platformMap : { [key in supportedPlastform]: string } = {
 
 const filterAssets = asset => {
   const archStr = platformMap[process.platform] || platformMap.linux
-  return asset.name.indexOf(archStr) >= 0 && asset.name.indexOf('.zip') >= 0;
+  return asset.name.indexOf(archStr) >= 0 && (asset.name.indexOf('.zip') >= 0 || asset.name.indexOf('.tar.gz') >= 0);
 }
 
 const extract = promisify(extractC)
 const glob = promisify(globC)
+
+async function extractAsset (zipPath: string, downloadDir: string) {
+  if (zipPath.includes('.zip')) {
+    // windows & macOS
+    await extract(zipPath, { dir: downloadDir })
+  } else {
+    // linux
+    await tar.extract({
+      file: zipPath,
+      cwd: downloadDir
+    })
+  }
+}
 
 async function run () {
   const { body: release } = await got('https://api.github.com/repos/jgm/pandoc/releases/latest', { json: true })
@@ -48,7 +62,7 @@ async function run () {
       })
     }
 
-    await extract(zipPath, { dir: downloadDir })
+    await extractAsset(zipPath, downloadDir)
 
     const files = await glob(`${downloadDir}/**/{pandoc,pandoc-citeproc}`)
     ;(files as string[]).forEach(f => {
