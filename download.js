@@ -37,7 +37,7 @@ async function extractAsset(zipPath, downloadDir) {
 
 async function run() {
   const { body: release } = await got('https://api.github.com/repos/jgm/pandoc/releases/latest', { json: true });
-  const donwloadRoot = path.join(__dirname, '../.pandoc-local');
+  const donwloadRoot = path.join(__dirname, './.pandoc-local');
   const downloadDir = path.join(donwloadRoot, release.tag_name);
 
   fs.ensureDirSync(downloadDir);
