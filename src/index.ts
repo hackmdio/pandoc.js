@@ -143,7 +143,7 @@ class Pandoc {
     }
   };
 
-  promisifyString (stream: ChildProcessWithoutNullStreams, cb = null) {
+  promisifyStream (stream: ChildProcessWithoutNullStreams, cb = null): Promise<string> {
     return new Promise((resolve, reject) => {
       let result = '';
       let error = '';
@@ -197,14 +197,14 @@ class Pandoc {
   ) {
     const pandoc = this.stream(from, to, args, options);
 
-    return this.promisifyString(pandoc, (stream) => {
+    return this.promisifyStream(pandoc, stream => {
       // finally, send source string
-      pandoc.stdin.end(src, 'utf8');
+      stream.stdin.end(src, 'utf8');
     })
   }
 
   convertFromFile (input: string, to: OutputFormat, output: string, args: string[] = [], options?: SpawnOptionsWithoutStdio) {
-    return this.promisifyString(spawn(this.defaultOptions.pandocBin, [
+    return this.promisifyStream(spawn(this.defaultOptions.pandocBin, [
       input,
       '-t', to,
       '-o', output,

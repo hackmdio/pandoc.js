@@ -1,7 +1,8 @@
-import { Pandoc, InputFormat, OutputFormat } from '../src'
 import { assert } from 'chai'
 import * as fs from 'fs'
 import tmp from 'tmp'
+
+import { Pandoc, InputFormat, OutputFormat } from '../src'
 
 describe('Test index', function () {
   it('should convert markdown to html', async function () {
