@@ -1,8 +1,9 @@
 {
-  "name": "@yukaii/pandoc.js",
-  "version": "0.1.8",
+  "name": "@hackmd/pandoc.js",
+  "version": "0.1.9",
   "description": "",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.spec.ts",
     "watch": "tsc -w",
