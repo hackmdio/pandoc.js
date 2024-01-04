@@ -68,6 +68,9 @@ async function run() {
     files.forEach(f => {
       fs.copyFileSync(f, path.join(donwloadRoot, path.basename(f)));
     });
+
+    // clean up
+    fs.removeSync(downloadDir);
   }
 }
 
