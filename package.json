@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "postinstall": "node download.js"
+    "install": "node download.js"
   },
   "keywords": [],
   "author": "",
