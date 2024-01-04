@@ -8,8 +8,8 @@
     "test": "mocha --require ts-node/register test/**/*.spec.ts",
     "watch": "tsc -w",
     "build": "tsc",
-    "prepublish": "npm run build",
-    "install": "node download.js"
+    "prepublishOnly": "npm run build",
+    "postinstall": "node download.js"
   },
   "keywords": [],
   "author": "",
