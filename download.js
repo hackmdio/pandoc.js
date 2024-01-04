@@ -6,6 +6,7 @@ const ProgressBar = require('progress');
 const extractC = require('extract-zip');
 const tar = require('tar');
 const globC = require('glob');
+const cp = require('child_process');
 
 const platformMap = {
   win32: process.arch === 'x64' ? 'windows-x86_64' : 'windows-i386',
@@ -35,8 +36,30 @@ async function extractAsset(zipPath, downloadDir) {
   }
 }
 
+async function checkLocalPandoc(version) {
+  const donwloadRoot = path.join(__dirname, './.pandoc-local');
+  const binaryPath = path.join(donwloadRoot, 'pandoc');
+
+  if (fs.existsSync(binaryPath)) {
+    try {
+      const stdout = cp.execSync(`${binaryPath} --version`).toString();
+      const localVersion = stdout.match(/pandoc (\d+\.\d+\.\d+)/)[1];
+      return localVersion === version;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+const VERSION = '3.1.11'
 async function run() {
-  const VERSION = '3.1.11'
+  if (await checkLocalPandoc(VERSION)) {
+    console.log('local pandoc already installed');
+    return;
+  }
+
   const { body: release } = await got(`https://api.github.com/repos/jgm/pandoc/releases/tags/${VERSION}`, { json: true });
   const donwloadRoot = path.join(__dirname, './.pandoc-local');
   const downloadDir = path.join(donwloadRoot, release.tag_name);
